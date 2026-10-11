@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Мой Мессенджер</title>
+  <style>
+    body { font-family: sans-serif; margin: 0; padding: 10px; background: #f5f5f5; }
+    #messages { height: 300px; overflow-y: auto; border: 1px solid #ccc; background: white; padding: 10px; margin-bottom: 10px; }
+    .msg { margin: 5px 0; }
+    .msg strong { color: #007bff; }
+    input { width: 70%; padding: 8px; }
+    button { padding: 8px 16px; background: #007bff; color: white; border: none; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <h2>Чат для своих</h2>
+  <div id="messages"></div>
+  <input type="text" id="text" placeholder="Сообщение...">
+  <button onclick="send()">Отправить</button>
+
+  <script>
+    const messages = document.getElementById('messages');
+    const textInput = document.getElementById('text');
+
+    function loadMessages() {
+      const stored = localStorage.getItem('myChatMessages') || '[]';
+      const arr = JSON.parse(stored);
+      messages.innerHTML = '';
+      arr.forEach(m => {
+        const div = document.createElement('div');
+        div.className = 'msg';
+        div.textContent = m;
+        messages.appendChild(div);
+      });
+      messages.scrollTop = messages.scrollHeight;
+    }
+
+    function send() {
+      const val = textInput.value.trim();
+      if (!val) return;
+      const now = new Date().toLocaleTimeString();
+      const msg = `[${now}] Ты: ${val}`;
+
+      const arr = JSON.parse(localStorage.getItem('myChatMessages') || '[]');
+      arr.push(msg);
+      if (arr.length > 100) arr.shift();
+      localStorage.setItem('myChatMessages', JSON.stringify(arr));
+
+      loadMessages();
+      textInput.value = '';
+    }
+
+    loadMessages();
+  </script>
+</body>
+</html>
